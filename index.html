@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Website - FiveM Yönetim Botu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at 50% 50%, #2b234e 0%, #0a1128 70%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background with subtle movement */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.2) 0%, transparent 50%);
+            animation: backgroundMove 12s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes backgroundMove {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(5px, -5px); }
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px 24px;
+            background: rgba(30, 27, 58, 0.3);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            max-width: 1200px;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            color: #f1f5f9;
+        }
+
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #8b5cf6;
+            transition: width 0.2s ease;
+        }
+
+        .nav-item:hover::after {
+            width: 100%;
+        }
+
+        .premium {
+            color: #facc15;
+            font-weight: 600;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: #f1f5f9;
+            padding: 8px 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: #f1f5f9;
+            cursor: pointer;
+            z-index: 11;
+        }
+
+        /* Main Content */
+        .main-content {
+            text-align: center;
+            padding: 80px 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+            padding: 10px 20px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 40px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .main-title {
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #ffffff;
+            line-height: 1.2;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .subtitle {
+            font-size: 17px;
+            color: #cbd5e1;
+            margin-bottom: 32px;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+            animation: slideUp 0.8s ease-out 0.1s both;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 40px;
+            animation: slideUp 0.8s ease-out 0.2s both;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: #f1f5f9;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #cbd5e1;
+            padding: 10px 22px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            border-color: #8b5cf6;
+            color: #f1f5f9;
+        }
+
+        /* Highlights */
+        .highlights {
+            text-align: left;
+            max-width: 520px;
+            margin: 0 auto 40px;
+            color: #cbd5e1;
+            font-size: 16px;
+            line-height: 1.6;
+            animation: slideUp 0.8s ease-out 0.3s both;
+        }
+
+        .highlights h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 12px;
+        }
+
+        .highlights ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .highlights li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        /* Stats */
+        .stats {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideUp 0.8s ease-out 0.3s both;
+            user-select: none;
+        }
+
+        .stats-text {
+            color: #cbd5e1;
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 28px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stats-number {
+            color: #8b5cf6;
+            font-weight: 700;
+        }
+
+        /* Server Cards with Centered Infinite Looping and Soft Fade */
+        .servers-container {
+            width: 984px; /* 6 cards (avg 150px) + 5 gaps (14px) = 900px + 40px padding + extra for dynamic width */
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+            -webkit-mask-image: linear-gradient(
+                to right,
+                transparent 0%,
+                rgba(0, 0, 0, 1) 10%,
+                rgba(0, 0, 0, 1) 90%,
+                transparent 100%
+            );
+            mask-image: linear-gradient(
+                to right,
+                transparent 0%,
+                rgba(0, 0, 0, 1) 10%,
+                rgba(0, 0, 0, 1) 90%,
+                transparent 100%
+            );
+        }
+
+        .servers {
+            display: flex;
+            gap: 14px;
+            flex-wrap: nowrap;
+            animation: slideRightToLeft 18s linear infinite; /* Slower for smoother feel */
+            white-space: nowrap;
+        }
+
+        @keyframes slideRightToLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-984px); } /* Matches width for seamless loop */
+        }
+
+        .servers:hover {
+            animation-play-state: paused;
+        }
+
+        .server-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 14px;
+            flex: 0 0 auto;
+            min-width: 150px;
+            max-width: 200px; /* Allow expansion for longer names */
+            transition: all 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .server-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(139, 92, 246, 0.2);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .server-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .server-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 13px;
+            color: #f1f5f9;
+            user-select: none;
+            white-space: normal; /* Allow wrapping for longer names */
+            word-break: break-word;
+        }
+
+        .server-members {
+            color: #cbd5e1;
+            font-size: 11px;
+            user-select: none;
+        }
+
+        .verified {
+            color: #22c55e;
+            user-select: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .header {
+                padding: 12px 16px;
+            }
+
+            .header-content {
+                gap: 20px;
+            }
+
+            .main-title {
+                font-size: 44px;
+            }
+
+            .servers-container {
+                width: 800px; /* 5 cards (avg 150px) + 4 gaps (14px) = 750px + 50px padding */
+                -webkit-mask-image: linear-gradient(
+                    to right,
+                    transparent 0%,
+                    rgba(0, 0, 0, 1) 12%,
+                    rgba(0, 0, 0, 1) 88%,
+                    transparent 100%
+                );
+                mask-image: linear-gradient(
+                    to right,
+                    transparent 0%,
+                    rgba(0, 0, 0, 1) 12%,
+                    rgba(0, 0, 0, 1) 88%,
+                    transparent 100%
+                );
+            }
+
+            @keyframes slideRightToLeft {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-800px); }
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 10px 12px;
+            }
+
+            .header-content {
+                justify-content: space-between;
+                align-items: center;
+                position: relative;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .nav {
+                display: none;
+                flex-direction: column;
+                gap: 16px;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(30, 27, 58, 0.9);
+                backdrop-filter: blur(10px);
+                padding: 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                z-index: 10;
+            }
+
+            .nav.active {
+                display: flex;
+            }
+
+            .nav-item {
+                font-size: 16px;
+                text-align: center;
+            }
+
+            .login-btn {
+                width: 100%;
+                max-width: 200px;
+                margin: 0 auto;
+                padding: 10px;
+                font-size: 15px;
+            }
+
+            .main-title {
+                font-size: 32px;
+            }
+
+            .subtitle {
+                font-size: 15px;
+                max-width: 90%;
+            }
+
+            .badge {
+                font-size: 13px;
+                padding: 8px 16px;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+                padding: 12px;
+            }
+
+            .servers-container {
+                width: 100%;
+                max-width: 600px; /* 4 cards (avg 130px) + 3 gaps (14px) = 520px + 40px padding */
+                padding: 0 10px;
+                -webkit-mask-image: linear-gradient(
+                    to right,
+                    transparent 0%,
+                    rgba(0, 0, 0, 1) 15%,
+                    rgba(0, 0, 0, 1) 85%,
+                    transparent 100%
+                );
+                mask-image: linear-gradient(
+                    to right,
+                    transparent 0%,
+                    rgba(0, 0, 0, 1) 15%,
+                    rgba(0, 0, 0, 1) 85%,
+                    transparent 100%
+                );
+            }
+
+            .server-card {
+                min-width: 120px;
+                max-width: 150px;
+                padding: 12px;
+            }
+
+            .server-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 13px;
+            }
+
+            .server-name {
+                font-size: 12px;
+            }
+
+            .server-members {
+                font-size: 10px;
+            }
+
+            @keyframes slideRightToLeft {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-562px); } /* 4 cards (120px) + 3 gaps (14px) = 522px + 40px */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 8px 10px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .logo-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+            }
+
+            .hamburger {
+                font-size: 20px;
+            }
+
+            .nav {
+                padding: 16px;
+            }
+
+            .nav-item {
+                font-size: 14px;
+            }
+
+            .login-btn {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            .main-title {
+                font-size: 28px;
+                line-height: 1.3;
+            }
+
+            .subtitle {
+                font-size: 14px;
+                max-width: 95%;
+            }
+
+            .badge {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            .stats-text {
+                font-size: 14px;
+            }
+
+            .servers-container {
+                max-width: 320px; /* 2 cards (120px) + 1 gap (14px) = 240px + 40px padding */
+                padding: 0 10px;
+                -webkit-mask-image: linear-gradient(
+                    to right,
+                    transparent 0%,
+                    rgba(0, 0, 0, 1) 20%,
+                    rgba(0, 0, 0, 1) 80%,
+                    transparent 100%
+                );
+                mask-image: linear-gradient(
+                    to right,
+                    transparent 0%,
+                    rgba(0, 0, 0, 1) 20%,
+                    rgba(0, 0, 0, 1) 80%,
+                    transparent 100%
+                );
+            }
+
+            .server-card {
+                min-width: 110px;
+                max-width: 130px;
+                padding: 10px;
+            }
+
+            .server-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+
+            .server-name {
+                font-size: 11px;
+            }
+
+            .server-members {
+                font-size: 9px;
+            }
+
+            @keyframes slideRightToLeft {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-294px); } /* 2 cards (110px) + 1 gap (14px) = 254px + 40px */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">👁️</div>
+                <span>Bot Website</span>
+            </div>
+            <button class="hamburger">☰</button>
+            <nav class="nav">
+                <a href="#" class="nav-item">Özellikler</a>
+                <a href="#" class="nav-item">Kaynaklar</a>
+                <a href="#" class="nav-item premium">Premium ✨</a>
+                <button class="login-btn">Giriş Yap</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="badge">Yeni: Üyelik Abonelikleri</div>
+        
+        <h1 class="main-title">FiveM Yönetim Botu<br>ile Sunucunuzu<br>Profesyonelce Yönetin!</h1>
+        
+        <p class="subtitle">
+            Sunucunuzu kolayca yönetin ve denetleyin! Bot Website ile gelişmiş komutlar, özelleştirilebilir özellikler ve hızlı kurulumun keyfini yaşayın.
+        </p>
+
+        <div class="button-group">
+            <a href="#" class="btn-primary">Sunucuna Ekle</a>
+            <a href="#" class="btn-secondary">Özelliklere Göz Atın</a>
+        </div>
+
+        <div class="stats">
+            <p class="stats-text">
+                AŞAĞIDAKİLER DAHİL <span class="stats-number">9.000.000</span> DAN FAZLA SUNUCU BİZE GÜVENİYOR
+            </p>
+        </div>
+
+        <div class="servers-container">
+            <div class="servers">
+                <div class="server-card">
+                    <div class="server-icon">TG</div>
+                    <div class="server-name">TUGAY GÖK <span class="verified">✓</span></div>
+                    <div class="server-members">110.000 Members</div>
+                </div>
+                
+                <div class="server-card">
+                    <div class="server-icon">AD</div>
+                    <div class="server-name">Adalances <span class="verified">✓</span></div>
+                    <div class="server-members">238.000 Members</div>
+                </div>
+                
+                <div class="server-card">
+                    <div class="server-icon">PW</div>
+                    <div class="server-name">PewDiePie | Floor Gang <span class="verified">✓</span></div>
+                    <div class="server-members">200.000 Members</div>
+                </div>
+                
+                <div class="server-card">
+                    <div class="server-icon">EL</div>
+                    <div class="server-name">Elraenn <span class="verified">✓</span></div>
+                    <div class="server-members">410.000 Members</div>
+                </div>
+                
+                <div class="server-card">
+                    <div class="server-icon">WT</div>
+                    <div class="server-name">wtcN <span class="verified">✓</span></div>
+                    <div class="server-members">110.000 Members</div>
+                </div>
+                <!-- Duplicated cards for seamless looping -->
+                <div class="server-card">
+                    <div class="server-icon">TG</div>
+                    <div class="server-name">TUGAY GÖK <span class="verified">✓</span></div>
+                    <div class="server-members">110.000 Members</div>
+                </div>
+                
+                <div class="server-card">
+                    <div class="server-icon">AD</div>
+                    <div class="server-name">Adalances <span class="verified">✓</span></div>
+                    <div class="server-members">238.000 Members</div>
+                </div>
+                
+                <div class="server-card">
+                    <div class="server-icon">PW</div>
+                    <div class="server-name">PewDiePie | Floor Gang <span class="verified">✓</span></div>
+                    <div class="server-members">200.000 Members</div>
+                </div>
+                
+                <div class="server-card">
+                    <div class="server-icon">EL</div>
+                    <div class="server-name">Elraenn <span class="verified">✓</span></div>
+                    <div class="server-members">410.000 Members</div>
+                </div>
+                
+                <div class="server-card">
+                    <div class="server-icon">WT</div>
+                    <div class="server-name">wtcN <span class="verified">✓</span></div>
+                    <div class="server-members">110.000 Members</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.querySelector('.hamburger').addEventListener('click', function() {
+            document.querySelector('.nav').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
